@@ -46,7 +46,6 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 ├── 📁 Business           → Servisler, DTO’lar, AutoMapper
 
 ├── 📁 DataAccess         → Veritabanı işlemleri (Dapper)
-
 │    
 ├── Models           
 └── Repositories
