@@ -133,19 +133,26 @@ BEGIN
     SET NOCOUNT ON;
 
     INSERT INTO ProductHistory (ProductId, OldPrice, NewPrice, OldStock, NewStock)
-    SELECT i.Id, d.Price, i.Price, d.Stock, i.Stock
-    FROM inserted i INNER JOIN deleted d ON i.Id = d.Id
-    WHERE i.Price != d.Price OR i.Stock != d.Stock;
-
-    UPDATE Products
-    SET IsSynced = 0
-    WHERE Id IN (
-        SELECT i.Id
-        FROM inserted i
+    SELECT
+        i.Id,
+        d.Price, i.Price,
+        d.Stock, i.Stock
+    FROM
+        inserted i
         INNER JOIN deleted d ON i.Id = d.Id
-        WHERE i.Price != d.Price OR i.Stock != d.Stock
-    );
+    WHERE
+        i.Price != d.Price OR i.Stock != d.Stock;
+
+ 
+    UPDATE p
+    SET p.IsSynced = 0
+    FROM Products p
+    INNER JOIN inserted i ON p.Id = i.Id
+    INNER JOIN deleted d ON p.Id = d.Id
+    WHERE
+        i.Price != d.Price OR i.Stock != d.Stock;
 END
+
 ```
 📇 İletişim
 LinkedIn - Ahmet Can Sezgi
