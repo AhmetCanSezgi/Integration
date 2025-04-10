@@ -71,7 +71,8 @@ Newtonsoft.Json
 
 
 🧱 4. SQL Tabloları
-🔸 Products
+
+```sql
 CREATE TABLE Products (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProductId INT NOT NULL UNIQUE,
@@ -83,7 +84,6 @@ CREATE TABLE Products (
     Stock DECIMAL(18,2) NOT NULL
 );
 
-🔸 Orders
 CREATE TABLE Orders (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     EntryId INT NOT NULL UNIQUE,
@@ -93,7 +93,6 @@ CREATE TABLE Orders (
     OrderDate DATETIME NOT NULL
 );
 
-🔸 OrderItems
 CREATE TABLE OrderItems (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     OrderId INT NOT NULL,
@@ -104,7 +103,6 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (ProductId) REFERENCES Products(Id)
 );
 
-🔸 Logs
 CREATE TABLE Logs (
     Id INT IDENTITY PRIMARY KEY,
     LogTime DATETIME,
@@ -112,7 +110,6 @@ CREATE TABLE Logs (
     Message NVARCHAR(MAX)
 );
 
-🔸 ProductHistory
 CREATE TABLE ProductHistory (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProductId INT NOT NULL,
@@ -123,9 +120,10 @@ CREATE TABLE ProductHistory (
     ChangedAt DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
-
+```
 Aşağıdaki SQL Trigger’ı oluştur (stok/fiyat değişimi izlenir):
 
+```sql
 
 CREATE TRIGGER trg_ProductChangeLog
 ON Products
@@ -148,7 +146,7 @@ BEGIN
         WHERE i.Price != d.Price OR i.Stock != d.Stock
     );
 END
-
+```
 📇 İletişim
 LinkedIn - Ahmet Can Sezgi
 
