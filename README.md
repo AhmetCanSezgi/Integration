@@ -40,7 +40,9 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 📂 Proje Yapısı
 
 ├── 📁 WinForms           → Kullanıcı Arayüzü
+
 ├── 📁 Business           → Servisler, DTO’lar, AutoMapper
+
 ├── 📁 DataAccess         → Veritabanı işlemleri (Dapper)
 │    ├── Models           
 │    └── Repositories
