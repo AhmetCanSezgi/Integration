@@ -37,12 +37,20 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 
 ---
 
-## 🧩 Proje Yapısı
+📂 Proje Yapısı
 
-Dehasoft/ ├── WinForms/ → Kullanıcı Arayüzü 
-├── Business/ → Servisler, DTO’lar, AutoMapper 
-├── DataAccess/ → Veritabanı işlemleri (Dapper) │ └── Models/ │ └── Repositories/ 
-├── appsettings.json → Bağlantı & API ayarları └── README.md
+├── 📁 WinForms           → Kullanıcı Arayüzü
+  
+└──  📄 appsettings.json   → Bağlantı & API ayarları
+
+├── 📁 Business           → Servisler, DTO’lar, AutoMapper
+
+├── 📁 DataAccess         → Veritabanı işlemleri (Dapper)
+│    
+├── Models           
+└── Repositories
+
+└── 📄 README.md
 
 
 ## 🖼 Ekran Görüntüsü
@@ -57,7 +65,8 @@ git clone https://github.com/AhmetCanSezgi/DehaSoft.git
 
 ⚙️ 2. appsettings.json İçeriği
 
-![Ekran görüntüsü 2025-04-10 081508](https://github.com/user-attachments/assets/923fb68e-24dc-4ad8-b97d-dba3eda1f29b)
+![Ekran görüntüsü 2025-04-10 083409](https://github.com/user-attachments/assets/3399d8a3-2ee6-478f-93e6-69c06ead5b16)
+
 
 
 📦 3. Gerekli NuGet Paketleri
@@ -70,8 +79,7 @@ Microsoft.Extensions.DependencyInjection
 Newtonsoft.Json
 
 
-🧱 4. SQL Tabloları
-
+📋 SQL Kurulumu
 ```sql
 CREATE TABLE Products (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -121,6 +129,7 @@ CREATE TABLE ProductHistory (
     FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
 ```
+
 Aşağıdaki SQL Trigger’ı oluştur (stok/fiyat değişimi izlenir):
 
 ```sql
