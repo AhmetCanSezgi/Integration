@@ -48,71 +48,67 @@ Dehasoft/ ├── WinForms/ → Kullanıcı Arayüzü
 ## 🖼 Ekran Görüntüsü
 ![Ekran görüntüsü 2025-04-10 080212](https://github.com/user-attachments/assets/1adc16db-4833-47cc-b8ab-2d719f8c14aa)
 
+
+📥 Kurulum ve Kullanım
+🔗 1. Projeyi Klonlayın
+
 git clone https://github.com/AhmetCanSezgi/DehaSoft.git
 
 
-appsettings.json içeriğini doldur:
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=...;Database=...;Trusted_Connection=True;"
-  },
-  "ApiSettings": {
-    "ApiKey": "...",
-    "ApiSecret": "..."
-  }
-}
+⚙️ 2. appsettings.json İçeriği
+
+![Ekran görüntüsü 2025-04-10 081508](https://github.com/user-attachments/assets/923fb68e-24dc-4ad8-b97d-dba3eda1f29b)
 
 
-Gerekli NuGet paketlerini yükle:
-Dapper, AutoMapper, Newtonsoft.Json, Microsoft.Extensions.DependencyInjection
+📦 3. Gerekli NuGet Paketleri
+Dapper
+
+AutoMapper.Extensions.Microsoft.DependencyInjection
+
+Microsoft.Extensions.DependencyInjection
+
+Newtonsoft.Json
 
 
-SQL tablolarını oluştur:
-
+🧱 4. SQL Tabloları
+🔸 Products
+CREATE TABLE Products (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ProductId INT NOT NULL UNIQUE,
+    Barcode VARCHAR(100) NOT NULL UNIQUE,
+    StockCode VARCHAR(100) NOT NULL UNIQUE,
+    Name VARCHAR(255) NOT NULL,
+    IsSynced BIT NOT NULL DEFAULT(1),
+    Price DECIMAL(18,2) NOT NULL,
+    Stock DECIMAL(18,2) NOT NULL
+);
+🔸 Orders
+CREATE TABLE Orders (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    EntryId INT NOT NULL UNIQUE,
+    Oid VARCHAR(100) NOT NULL,
+    UserId INT NOT NULL,
+    Total DECIMAL(18,2) NOT NULL,
+    OrderDate DATETIME NOT NULL
+);
+🔸 OrderItems
 CREATE TABLE OrderItems (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    OrderId INT NOT NULL,                       
-    ProductId INT NOT NULL,                   
+    OrderId INT NOT NULL,
+    ProductId INT NOT NULL,
     Quantity INT NOT NULL,
     SalePrice DECIMAL(18,2) NOT NULL,
     FOREIGN KEY (OrderId) REFERENCES Orders(Id),
     FOREIGN KEY (ProductId) REFERENCES Products(Id)
 );
-
-
--- Ürünler Tablosu
-CREATE TABLE Products (
-    Id INT IDENTITY(1,1) PRIMARY KEY,           
-    ProductId INT NOT NULL UNIQUE,              
-    Barcode VARCHAR(100) NOT NULL UNIQUE,
-    StockCode VARCHAR(100) NOT NULL UNIQUE,
-    Name VARCHAR(255) NOT NULL,
-	IsSynced bit NOT NULL Default(1),
-    Price DECIMAL(18,2) NOT NULL,
-    Stock DECIMAL(18,2) NOT NULL,
-
-);
-
-
-
--- Siparişler Tablosu
-CREATE TABLE Orders (
-    Id INT IDENTITY(1,1) PRIMARY KEY,          
-    EntryId INT NOT NULL UNIQUE,                
-    Oid VARCHAR(100) NOT NULL,
-    UserId INT NOT NULL,
-    Total DECIMAL(18,2) NOT NULL,
-    OrderDate DATETIME NOT NULL,
-
-);
-
+🔸 Logs
 CREATE TABLE Logs (
     Id INT IDENTITY PRIMARY KEY,
     LogTime DATETIME,
-    Type VARCHAR(10), -- INFO, ERROR
+    Type VARCHAR(10),
     Message NVARCHAR(MAX)
 );
-
+🔸 ProductHistory
 CREATE TABLE ProductHistory (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProductId INT NOT NULL,
@@ -121,9 +117,7 @@ CREATE TABLE ProductHistory (
     OldStock DECIMAL(18, 2),
     NewStock DECIMAL(18, 2),
     ChangedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_ProductHistory_Product FOREIGN KEY (ProductId)
-        REFERENCES Products(Id)
-        ON DELETE CASCADE
+    FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
 
 Aşağıdaki SQL Trigger’ı oluştur (stok/fiyat değişimi izlenir):
