@@ -2,7 +2,7 @@
 
 public interface IProductService
 {
-    Task SyncUpdatedProductsAsync();
-    Task MarkProductAsDirtyAsync(int productId);
+
+    Task<bool> UpdateProductPriceAndStockAsync(int productId, decimal newPrice);
     Task<bool> ProcessOrderItemAsync(OrderItem item);
 }

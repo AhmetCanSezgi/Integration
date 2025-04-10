@@ -3,8 +3,6 @@ using Dehasoft.DataAccess.Repositories;
 using Dehasoft.WinForms;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
-using Dehasoft.Business.Mappings; // AutoMapper ekleniyor
 
 namespace Dehasoft
 {
@@ -29,9 +27,9 @@ namespace Dehasoft
             var orderService = serviceProvider.GetRequiredService<IOrderService>();
             var productRepository = serviceProvider.GetRequiredService<IProductRepository>();
             var ProductService = serviceProvider.GetRequiredService<IProductService>();
-            
+            var LogService = serviceProvider.GetRequiredService<ILogService>();
 
-            Application.Run(new Form1(orderService, productRepository, ProductService));
+            Application.Run(new Form1(orderService, productRepository, ProductService, LogService));
         }
     }
 }

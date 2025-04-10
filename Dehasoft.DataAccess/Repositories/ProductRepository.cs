@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Dehasoft.DataAccess.Repositories
 {
-    public class ProductRepository (DatabaseContext _db): IProductRepository
+    public class ProductRepository(DatabaseContext _db) : IProductRepository
     {
     
         public IDbConnection GetDbConnection() => _db.CreateConnection();
@@ -30,6 +30,11 @@ namespace Dehasoft.DataAccess.Repositories
             const string query = "UPDATE Products SET Stock = Stock - @Qty WHERE Id = @Id";
             await conn.ExecuteAsync(query, new { Qty = quantity, Id = productId }, trx);
         }
+        public async Task UpdatePriceAndStockAsync(int productId, decimal price, IDbConnection conn, IDbTransaction trx)
+        {
+            const string query = "UPDATE Products SET Price = @Price  WHERE Id = @Id";
+            await conn.ExecuteAsync(query, new { Price = price, Id = productId }, trx);
+        }
 
         public async Task<List<Product>> GetAllAsync(IDbConnection conn)
         {
@@ -38,21 +43,11 @@ namespace Dehasoft.DataAccess.Repositories
             return products.AsList();
         }
 
-        public async Task<IEnumerable<Product>> GetUnsyncedProductsAsync(IDbConnection conn)
-        {
-            const string query = "SELECT * FROM Products WHERE IsSynced = 0";
-            return await conn.QueryAsync<Product>(query);
-        }
-
-        public async Task MarkAsSyncedAsync(int productId, IDbConnection conn, IDbTransaction? trx = null)
-        {
-            const string query = "UPDATE Products SET IsSynced = 1 WHERE Id = @Id";
-            await conn.ExecuteAsync(query, new { Id = productId }, trx);
-        }
+    
 
         public async Task MarkAsUnsyncedAsync(int productId, IDbConnection conn, IDbTransaction? trx = null)
         {
-            const string query = "UPDATE Products SET IsSynced = 0 WHERE Id = @Id";
+            const string query = "UPDATE Products SET IsSynced = 1 WHERE Id = @Id";
             await conn.ExecuteAsync(query, new { Id = productId }, trx);
         }
 
@@ -76,6 +71,5 @@ namespace Dehasoft.DataAccess.Repositories
         }
 
        
-
     }
 }

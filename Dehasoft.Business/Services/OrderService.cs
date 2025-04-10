@@ -19,12 +19,12 @@ namespace Dehasoft.Business.Services
             if (string.IsNullOrEmpty(data)) return;
 
             var orderDtos = JsonConvert.DeserializeObject<List<OrderDto>>(data);
-            if (orderDtos == null || !orderDtos.Any()) return;
+            if (orderDtos is null || !orderDtos.Any()) return;
 
             using var connection = _orderRepository.GetDbConnection();
             connection.Open();
             using var transaction = connection.BeginTransaction();
-
+            
             try
             {
                 foreach (var dto in orderDtos)

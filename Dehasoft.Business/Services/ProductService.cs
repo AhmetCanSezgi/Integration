@@ -1,43 +1,57 @@
 ﻿using Dehasoft.DataAccess.Models;
 using Dehasoft.DataAccess.Repositories;
 
-public class ProductService(IProductRepository _productRepository, ApiService _apiService) : IProductService
+public class ProductService(IProductRepository _productRepository, ApiService _apiService, ILogService _logService) : IProductService
 {
-    
-    public async Task SyncUpdatedProductsAsync()
 
+    public async Task<bool> UpdateProductPriceAndStockAsync(int productId, decimal newPrice)
     {
-
         using var connection = _productRepository.GetDbConnection();
         connection.Open();
+        using var trx = connection.BeginTransaction();
 
-        var productsToSync = await _productRepository.GetUnsyncedProductsAsync(connection);
-
-        foreach (var product in productsToSync)
+        try
         {
-            try
+            var product = await _productRepository.GetByIdAsync(productId, connection, trx);
+            if (product == null)
             {
-                await _apiService.UpdateStockAndPriceAsync(product.StockCode, product.Price, product.Stock);
-                await _productRepository.MarkAsSyncedAsync(product.Id, connection);
-                await _productRepository.InsertLogAsync("INFO", $"[SYNC] Ürün güncellendi: {product.Name} | Stok: {product.Stock} | Fiyat: {product.Price}", connection, null);
+                await _logService.LogAsync("ERROR", $"[UPDATE ERROR] Ürün bulunamadı. ID: {productId}", trx);
+                trx.Rollback();
+                return false;
             }
-            catch (Exception ex)
+
+            
+            bool priceChanged = product.Price != newPrice;
+
+            if (!priceChanged)
             {
-                Console.WriteLine($"Servise aktarım hatası: {product.Name} - {ex.Message}");
-                await _productRepository.InsertLogAsync("ERROR", $"[SYNC ERROR] {product.Name} - {ex.Message}", connection, null);
+                await _logService.LogAsync("INFO", $"[UPDATE SKIPPED] Ürün değişmedi: {product.Name}", trx);
+                trx.Commit();
+                return true;
             }
+
+           
+            await _productRepository.UpdatePriceAndStockAsync(productId, newPrice, connection, trx);
+
+           
+            await _apiService.UpdateStockAndPriceAsync(product.StockCode, newPrice, product.Stock);
+
+            // Mark as unsynced
+            await _productRepository.MarkAsUnsyncedAsync(productId, connection, trx);
+
+            await _logService.LogAsync("INFO", $"[UPDATE SUCCESS] Ürün güncellendi: {product.Name} | Stok: {product.Stock} | Fiyat: {newPrice}", trx);
+            trx.Commit();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            trx.Rollback();
+            await _logService.LogAsync("ERROR", $"[UPDATE EXCEPTION] Ürün ID={productId} | {ex.Message}");
+            return false;
         }
     }
 
-    public async Task MarkProductAsDirtyAsync(int productId)
-    {
-        using var connection = _productRepository.GetDbConnection();
 
-        connection.Open();
-
-        await _productRepository.MarkAsUnsyncedAsync(productId, connection);
-        await _productRepository.InsertLogAsync("INFO", $"[DIRTY MARKED] Ürün ID: {productId} senkronizasyon için işaretlendi.", connection, null);
-    }
 
     public async Task<bool> ProcessOrderItemAsync(OrderItem item)
     {
@@ -49,17 +63,17 @@ public class ProductService(IProductRepository _productRepository, ApiService _a
         {
             var product = await _productRepository.GetByIdAsync(item.ProductId, connection, trx);
 
-            if (product == null || product.Stock < item.Quantity)
+            if (product is null || product.Stock < item.Quantity)
             {
-                await _productRepository.InsertLogAsync("ERROR", $"[BUY ERROR] Yetersiz stok veya ürün yok: ProductId={item.ProductId}", connection, trx);
+                await _logService.LogAsync("ERROR", $"[BUY ERROR] Yetersiz stok veya ürün yok: ProductId={item.ProductId}", trx);
+                trx.Rollback();
                 return false;
             }
 
             await _productRepository.UpdateStockAsync(product.Id, item.Quantity, connection, trx);
             await _apiService.UpdateStockAndPriceAsync(product.StockCode, product.Price, product.Stock - item.Quantity);
             await _productRepository.MarkAsUnsyncedAsync(product.Id, connection, trx);
-
-            await _productRepository.InsertLogAsync("INFO", $"[BUY] {product.Name} ürününden {item.Quantity} adet satın alındı.", connection, trx);
+          
 
             trx.Commit();
             return true;
@@ -67,7 +81,7 @@ public class ProductService(IProductRepository _productRepository, ApiService _a
         catch (Exception ex)
         {
             trx.Rollback();
-            await _productRepository.InsertLogAsync("ERROR", $"[PROCESS ERROR] {item.ProductId} - {ex.Message}", connection, null);
+            await _logService.LogAsync("ERROR", $"[BUY PROCESS EXCEPTION] {ex.Message}");
             return false;
         }
     }
