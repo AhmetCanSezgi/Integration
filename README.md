@@ -47,7 +47,9 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 │    
 ├── Models           
 └── Repositories
+
 ├── 📄 appsettings.json   → Bağlantı & API ayarları
+
 └── 📄 README.md
 
 
