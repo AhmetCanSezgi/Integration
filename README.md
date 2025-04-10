@@ -40,6 +40,8 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 📂 Proje Yapısı
 
 ├── 📁 WinForms           → Kullanıcı Arayüzü
+│    
+├── 📄 appsettings.json   → Bağlantı & API ayarları
 
 ├── 📁 Business           → Servisler, DTO’lar, AutoMapper
 
@@ -48,7 +50,7 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 ├── Models           
 └── Repositories
 
-├── 📄 appsettings.json   → Bağlantı & API ayarları
+
 
 └── 📄 README.md
 
