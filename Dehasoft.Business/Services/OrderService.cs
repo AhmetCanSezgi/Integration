@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Dehasoft.Business.Services
 {
-    public class OrderService ( IOrderRepository _orderRepository, IProductRepository _productRepository, ApiService _apiService, IMapper _mapper) : IOrderService 
+    public class OrderService ( IOrderRepository _orderRepository, IProductRepository _productRepository, ApiService _apiService, IMapper _mapper,ILogService _logService) : IOrderService 
     {
        
         public async Task FetchAndProcessOrdersAsync(int page, int size)
@@ -15,7 +15,7 @@ namespace Dehasoft.Business.Services
             var json = await _apiService.GetOrdersJsonAsync(page, size);
             var root = JObject.Parse(json);
             var data = root["orders"]?["data"]?.ToString();
-
+            var appSettings=new AppSettings();
             if (string.IsNullOrEmpty(data)) return;
 
             var orderDtos = JsonConvert.DeserializeObject<List<OrderDto>>(data);
@@ -38,21 +38,21 @@ namespace Dehasoft.Business.Services
                     foreach (var itemDto in dto.get_items)
                     {
                         var product = await _productRepository.GetByExternalProductIdAsync(itemDto.product_id, connection, transaction);
-
-                        if (product == null)
+                        var salePrice = decimal.Parse(itemDto.sale_price);
+                        if (product is null)
                         {
-                            if (itemDto.get_product_basic == null) continue;
+                            if (itemDto.get_product_basic is null) continue;
 
                             product = _mapper.Map<Product>(itemDto.get_product_basic);
                             product.ProductId = itemDto.product_id;
-                            product.Price = decimal.Parse(itemDto.sale_price);
-                            product.Stock = 100;
+                            product.Price = salePrice;
+                            product.Stock = appSettings.DefaultStock;
 
                             product.Id = await _productRepository.InsertAsync(product, connection, transaction);
                         }
 
                         var quantity = itemDto.quantity;
-                        var salePrice = decimal.Parse(itemDto.sale_price);
+                   
 
                         if (product.Stock >= quantity)
                         {
@@ -65,11 +65,10 @@ namespace Dehasoft.Business.Services
 
                             await _orderRepository.UpdateStockAsync(product.Id, quantity, connection, transaction);
                             await _apiService.UpdateStockAndPriceAsync(product.StockCode, product.Price, product.Stock - quantity);
-                            await _productRepository.MarkAsUnsyncedAsync(product.Id, connection, transaction);
                         }
                         else
                         {
-                            await _productRepository.InsertLogAsync("ERROR", $"Yetersiz stok: {product.Name}", connection);
+                            await _logService.LogAsync("ERROR", $"Yetersiz stok: {product.Name}", transaction);
                         }
                     }
 
@@ -81,7 +80,7 @@ namespace Dehasoft.Business.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                await _productRepository.InsertLogAsync("ERROR", $"Sipariş işleme hatası: {ex.Message}", connection,null);
+                await _logService.LogAsync("ERROR", $"Sipariş işleme hatası: {ex.Message}", transaction);
             }
         }
     }

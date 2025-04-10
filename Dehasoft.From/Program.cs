@@ -23,7 +23,7 @@ namespace Dehasoft
             var serviceProvider = services.BuildServiceProvider();
 
             ApplicationConfiguration.Initialize();
-
+            services.AddSingleton<IConfiguration>(config);
             var orderService = serviceProvider.GetRequiredService<IOrderService>();
             var productRepository = serviceProvider.GetRequiredService<IProductRepository>();
             var ProductService = serviceProvider.GetRequiredService<IProductService>();

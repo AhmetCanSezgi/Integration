@@ -1,4 +1,4 @@
-﻿namespace Dehasoft.DataAccess.Models.Dto
+﻿namespace Dehasoft.DataAccess.Models
 {
     public class DehaSoftApi
     {

@@ -43,13 +43,6 @@ namespace Dehasoft.DataAccess.Repositories
             return products.AsList();
         }
 
-    
-
-        public async Task MarkAsUnsyncedAsync(int productId, IDbConnection conn, IDbTransaction? trx = null)
-        {
-            const string query = "UPDATE Products SET IsSynced = 1 WHERE Id = @Id";
-            await conn.ExecuteAsync(query, new { Id = productId }, trx);
-        }
 
         public async Task InsertLogAsync(string type, string message, IDbConnection conn, IDbTransaction? trx = null)
         {

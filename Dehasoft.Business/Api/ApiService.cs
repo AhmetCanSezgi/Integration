@@ -1,17 +1,19 @@
-﻿using Dehasoft.DataAccess.Models.Dto;
+﻿using Dehasoft.DataAccess.Models;
 using Newtonsoft.Json;
 using System.Text;
 
 public class ApiService
 {
-    private readonly HttpClient _client;
+   
     private readonly ILogService _logService;
-
+    private static readonly HttpClient _client = new HttpClient();
     public ApiService(string apiKey, string apiSecret, ILogService logService)
     {
-        _client = new HttpClient();
-        _client.DefaultRequestHeaders.Add("Dehasoft-Api-Key", apiKey);
-        _client.DefaultRequestHeaders.Add("Dehasoft-Api-Secret", apiSecret);
+        if (!_client.DefaultRequestHeaders.Contains("Dehasoft-Api-Key"))
+        {
+            _client.DefaultRequestHeaders.Add("Dehasoft-Api-Key", apiKey);
+            _client.DefaultRequestHeaders.Add("Dehasoft-Api-Secret", apiSecret);
+        }
         _logService = logService;
     }
 
