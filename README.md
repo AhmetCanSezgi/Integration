@@ -82,6 +82,7 @@ CREATE TABLE Products (
     Price DECIMAL(18,2) NOT NULL,
     Stock DECIMAL(18,2) NOT NULL
 );
+
 🔸 Orders
 CREATE TABLE Orders (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -91,6 +92,7 @@ CREATE TABLE Orders (
     Total DECIMAL(18,2) NOT NULL,
     OrderDate DATETIME NOT NULL
 );
+
 🔸 OrderItems
 CREATE TABLE OrderItems (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -101,6 +103,7 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (OrderId) REFERENCES Orders(Id),
     FOREIGN KEY (ProductId) REFERENCES Products(Id)
 );
+
 🔸 Logs
 CREATE TABLE Logs (
     Id INT IDENTITY PRIMARY KEY,
@@ -108,6 +111,7 @@ CREATE TABLE Logs (
     Type VARCHAR(10),
     Message NVARCHAR(MAX)
 );
+
 🔸 ProductHistory
 CREATE TABLE ProductHistory (
     Id INT IDENTITY(1,1) PRIMARY KEY,
