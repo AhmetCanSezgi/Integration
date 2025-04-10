@@ -60,7 +60,8 @@ git clone https://github.com/AhmetCanSezgi/DehaSoft.git
 
 ⚙️ 2. appsettings.json İçeriği
 
-![Ekran görüntüsü 2025-04-10 081508](https://github.com/user-attachments/assets/923fb68e-24dc-4ad8-b97d-dba3eda1f29b)
+![Ekran görüntüsü 2025-04-10 083409](https://github.com/user-attachments/assets/3399d8a3-2ee6-478f-93e6-69c06ead5b16)
+
 
 
 📦 3. Gerekli NuGet Paketleri
