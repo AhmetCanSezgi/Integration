@@ -74,11 +74,7 @@ Newtonsoft.Json
 
 
 📋 SQL Kurulumu
-📌 SQL Tablolarını Oluşturun:
-<details> <summary>👉 Tabloları görüntüle</summary>
-sql
-Kopyala
-Düzenle
+```sql
 CREATE TABLE Products (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProductId INT NOT NULL UNIQUE,
@@ -126,7 +122,7 @@ CREATE TABLE ProductHistory (
     ChangedAt DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
-</details>
+```
 
 Aşağıdaki SQL Trigger’ı oluştur (stok/fiyat değişimi izlenir):
 
