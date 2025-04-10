@@ -41,10 +41,10 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 
 ├── 📁 WinForms           → Kullanıcı Arayüzü
 │    
-├── 📄 appsettings.json   → Bağlantı & API ayarları
-
+└──  📄 appsettings.json   → Bağlantı & API ayarları
+│ 
 ├── 📁 Business           → Servisler, DTO’lar, AutoMapper
-
+│ 
 ├── 📁 DataAccess         → Veritabanı işlemleri (Dapper)
 │    
 ├── Models           
