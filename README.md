@@ -45,8 +45,8 @@ Bu uygulama, Dehasoft servisinden gelen siparişleri çekip veritabanına kayded
 
 ├── 📁 DataAccess         → Veritabanı işlemleri (Dapper)
 │    ├── Models           
-│    └── Repositories
-
+│    
+└── Repositories
 ├── 📄 appsettings.json   → Bağlantı & API ayarları
 └── 📄 README.md
 
