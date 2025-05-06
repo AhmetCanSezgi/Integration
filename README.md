@@ -1,4 +1,4 @@
-<h1 align="center">📦 Dehasoft Entegrasyon Uygulaması</h1>
+<h1 align="center">📦 Entegrasyon Uygulaması</h1>
 
 <p align="center">
   REST API + WinForms + Dapper + AutoMapper ile <br/>
